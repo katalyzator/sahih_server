@@ -13,14 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from tastypie.api import Api
 
+from main.api import QuestionResource
+from main.views import get_question
 from sahih_server import settings
+
+v1 = Api(api_name='v1')
+v1.register(QuestionResource())
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/', include(v1.urls)),
+    url(r'^get_question/$', get_question, name='get_question'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
